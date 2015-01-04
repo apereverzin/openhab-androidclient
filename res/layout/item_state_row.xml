@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/HorizontalLinearLayout.Expandable">
+        <TextView android:id="@+id/item_id"
+                  style="@style/TextView.HorizontallyExpandable.ItemStatesRowText"/>
+</LinearLayout>

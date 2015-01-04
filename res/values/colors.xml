@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Item states list -->
+    <color name="item_states_background">#000000</color>
+    <color name="item_states_row_text">#ffffff</color>
+
+    <!-- Item state -->
+    <color name="item_state_background">#000000</color>
+    <color name="item_state_label_text">#ffffff</color>
+    <color name="item_state_value_text">#ffffff</color>
+    
+    <!-- Account -->
+    <color name="account_background">#000000</color>
+    <color name="account_label_text">#ffffff</color>
+    <color name="account_value_text">#ffffff</color>
+
+    <color name="buttons_background">#888888</color>
+</resources>

@@ -1,0 +1,142 @@
+<!-- resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        
+    </style>
+</resources -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="GenericField">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="GenericField.Email">
+        <item name="android:inputType">textEmailAddress</item>
+    </style>
+    
+    <style name="GenericField.Account">
+        <item name="android:inputType">textEmailAddress</item>
+    </style>
+    
+    <style name="GenericField.Password">
+        <item name="android:inputType">textPassword</item>
+    </style>
+    
+    <style name="GenericField.Text">
+        <item name="android:inputType">text</item>
+    </style>
+    
+    <style name="GenericField.Text.Next">
+        <item name="android:imeOptions">actionNext</item>
+    </style>
+    
+    <style name="GenericField.Text.Done">
+        <item name="android:imeOptions">actionDone</item>
+    </style>
+    
+    <style name="GenericField.Number">
+        <item name="android:inputType">number</item>
+    </style>
+    
+    <style name="GenericField.Number.Next">
+        <item name="android:imeOptions">actionNext</item>
+    </style>
+    
+    <style name="GenericField.Number.Done">
+        <item name="android:imeOptions">actionDone</item>
+    </style>
+    
+    <style name="TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">3dp</item>
+    </style>
+    
+    <style name="TextView.HorizontallyExpandable">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:padding">3dp</item>
+    </style>
+    
+    <style name="TextView.HorizontallyExpandable.AccountLabelText">
+        <item name="android:textColor">@color/account_label_text</item>
+    </style>
+
+    <style name="TextView.HorizontallyExpandable.AccountValueText">
+        <item name="android:textColor">@color/account_value_text</item>
+    </style>
+
+    <style name="TextView.AccountLabelText">
+        <item name="android:textColor">@color/account_label_text</item>
+    </style>
+
+    <style name="TextView.AccountValueText">
+        <item name="android:textColor">@color/account_value_text</item>
+    </style>
+
+    <style name="TextView.HorizontallyExpandable.ItemStatesRowText">
+        <item name="android:textColor">@color/item_states_row_text</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="ExpandableButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="VerticalLinearLayout">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+    
+    <style name="VerticalExpandableLinearLayout">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="VerticalLinearLayout.AccountBackground">
+        <item name="android:background">@color/account_background</item>
+    </style>
+    
+    <style name="VerticalLinearLayout.ItemStatesBackground">
+        <item name="android:background">@color/item_states_background</item>
+    </style>
+    
+    <style name="HorizontalLinearLayout">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="HorizontalLinearLayout.Grey">
+        <item name="android:background">#888</item>
+    </style>
+    
+    <style name="HorizontalLinearLayout.Expandable">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="CheckBoxField">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:padding">3dp</item>
+    </style>
+    
+    <style name="ScrollViewFillViewport">
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:fillViewport">true</item>
+    </style>
+    
+    <style name="ItemStateRowImage">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:paddingRight">6dp</item>
+    </style>
+</resources>

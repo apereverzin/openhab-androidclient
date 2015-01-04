@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- buttons -->
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="test">Test</string>
+    <string name="next">Next</string>
+    <string name="save_and_finish">Save</string>
+    
+    <!-- Mail properties -->
+    <string name="mail_settings_activity_name">Email Settings</string>
+    <string name="mail_address_activity_name">Email Address</string>
+    <string name="mail_username">Email address</string>
+    <string name="google_account">Google account</string>
+    <string name="google_account_activity_name">Google Account</string>
+    <string name="mail_password">Password</string>
+    <string name="mail_smtp_settings_activity_name">SMTP Settings</string>
+    <string name="mail_smtp_host">SMTP host</string>
+    <string name="mail_smtp_port">SMTP port</string>
+    <string name="mail_smtp_auth">SMTP auth</string>
+    <string name="mail_smtp_start_tls_enable">SMTP start Tls enable</string>
+    <string name="mail_smtp_socket_factory_port">SMTP socket factory port</string>
+    <string name="mail_smtp_socket_factory_class">SMTP socket factory class</string>
+    <string name="mail_pop3_settings_activity_name">POP3 Settings</string>
+    <string name="mail_pop3_host">POP3 host</string>
+    <string name="mail_pop3_port">POP3 port</string>
+    <string name="mail_imap_settings_activity_name">IMAP settings</string>
+    <string name="mail_pop3_socket_factory_port">POP3 socket factory port</string>
+    <string name="mail_pop3_socket_factory_class">POP3 socket factory class</string>
+    <string name="mail_pop3_socket_factory_fallback">POP3 socket factory fallback</string>
+    <string name="mail_imap_host">IMAP host</string>
+    <string name="mail_imap_port">IMAP port</string>
+    <string name="finish_activity_name">Finish</string>
+    
+    <!-- Activity Titles -->
+    <string name="app_name">OpenHAB Client</string>
+    <string name="item_states">Item States</string>
+    <string name="view_item_state">View Item State</string>
+    
+    <!-- Check Email Result -->
+    <string name="check_email_result_title">Check Email</string>
+    <string name="check_email_smtp">Checking SMTP settings. Please, wait&#8230;</string>
+    <string name="check_email_settings">Checking email settings. Please, wait&#8230;</string>
+    <string name="check_email_pop3">Checking POP3 settings. Please, wait&#8230;</string>
+    <string name="check_email_imap">Checking IMAP settings. Please, wait&#8230;</string>
+    <string name="check_email_result_authentication_failed">Authentication failed</string>
+    <string name="check_email_result_connection_failed">Connection failed</string>
+    <string name="check_email_result_pending">Pending&#8230;</string>
+    <string name="check_email_result_smtp">SMTP</string>
+    <string name="check_email_result_pop3">POP3</string>
+    <string name="check_email_result_imap">IMAP</string>
+    <string name="check_email_result_success">Success</string>
+    <string name="check_email_result_failure">Failure</string>
+    
+    <!-- Item States -->
+    <string name="no_item_states">No items</string>
+        
+    <!-- Item States Options Menu Items -->
+    <string name="menu_refresh_item_states">Refresh</string>
+    
+    <!-- Item States Context Menu Items -->
+    <string name="menu_view_item_state">View Item</string>
+    
+    <string name="google_account_not_found">Google account is not found. Please, define your Google account first</string>
+    <string name="invalid_email_address">Invalid email address</string>
+    <string name="empty_password">Password cannot be empty</string>
+    <string name="not_google_account">Google Account must be either username@googlemail.com or username@gmail.com</string>
+</resources>
