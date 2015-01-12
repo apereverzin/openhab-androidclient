@@ -1,11 +1,19 @@
 package org.creek.openhab.androidclient.activity.items;
 
 import java.util.List;
+import java.util.Map;
 
+import org.creek.mailcontrol.model.data.CommandTransformable;
+import org.creek.mailcontrol.model.data.ItemCommandData;
 import org.creek.mailcontrol.model.data.ItemStateData;
+import org.creek.mailcontrol.model.message.ItemCommandRequestMessage;
+import org.creek.mailcontrol.model.message.ItemsStateRequestMessage;
 import org.creek.mailcontrol.model.message.ItemsStateResponseMessage;
 import org.creek.mailcontrol.model.util.JSONTransformer;
+import org.creek.openhab.androidclient.OpenHABClientApplication;
 import org.creek.openhab.androidclient.R;
+import org.creek.openhab.androidclient.stateprocessor.CommandTransformableMenuItem;
+import org.creek.openhab.androidclient.stateprocessor.ItemStateProcessor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -37,17 +45,22 @@ public final class ItemsActivity extends ListActivity {
     
     // Options menu
     private static final int REFRESH_ITEM_STATES_MENU_ITEM = FIRST;
+    private static final int ENABLE_MENU_ITEM = FIRST + 1;
+    private static final int DISABLE_MENU_ITEM = FIRST + 2;
 
     // Context menu
-    private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = FIRST;
+    private static final int VIEW_ITEM_STATE_MENU_ITEM = FIRST;
 
-    static final String CONTACT_SELECTED = "CONTACT_SELECTED";
-    
     private List<ItemStateData> itemStates;
     
     private ListView lv;
     
-    private ItemStateArrayAdapter itemStatesListAdapter;
+    private ItemStatesArrayAdapter itemStatesListAdapter;
+    private ItemStateProcessor itemStateProcessor;
+    private Map<Integer, CommandTransformableMenuItem> contextMenuItems;
+    
+    private MenuItem enableMenuItem;
+    private MenuItem disableMenuItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,11 +81,15 @@ public final class ItemsActivity extends ListActivity {
             }
         });
         
-        ItemsStateResponseMessage msg = buildMessage();
-        itemStates = msg.getItemStates();
+//        ItemsStateResponseMessage msg = buildMessage();
+//        itemStates = msg.getItemStates();
+        itemStates = OpenHABClientApplication.getItemStates();
         
-        itemStatesListAdapter = new ItemStateArrayAdapter(this, itemStates);
-        setListAdapter(itemStatesListAdapter);
+        OpenHABClientApplication.registerItemsActivity(this);
+        
+        updateListAdapter();
+        
+        itemStateProcessor = new ItemStateProcessor();
 
         registerForContextMenu(getListView());
     }
@@ -82,6 +99,15 @@ public final class ItemsActivity extends ListActivity {
         Log.i(TAG, "onCreateOptionsMenu()");
         try {
             menu.add(0, REFRESH_ITEM_STATES_MENU_ITEM, 0, R.string.menu_refresh_item_states);
+            menu.add(0, DISABLE_MENU_ITEM, 0, R.string.menu_disable);
+            menu.add(0, ENABLE_MENU_ITEM, 0, R.string.menu_enable);
+            enableMenuItem = menu.findItem(ENABLE_MENU_ITEM);
+            disableMenuItem = menu.findItem(DISABLE_MENU_ITEM);
+            if (OpenHABClientApplication.isEnabled()) {
+                setEnabled();
+            } else {
+                setDisabled();
+            }
         } catch (Exception ex) {
             showException(ItemsActivity.this, ex);
         }
@@ -93,7 +119,18 @@ public final class ItemsActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case REFRESH_ITEM_STATES_MENU_ITEM:
-            //
+            itemStates = OpenHABClientApplication.getItemStates();
+            ItemsStateRequestMessage request = new ItemsStateRequestMessage(OpenHABClientApplication.getSenderEmailAddress());
+            OpenHABClientApplication.addRequest(request);
+            return true;
+        case ENABLE_MENU_ITEM:
+            OpenHABClientApplication.enable();
+            setEnabled();
+            return true;
+        case DISABLE_MENU_ITEM:
+            OpenHABClientApplication.disable();
+            setDisabled();
+            return true;
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -104,19 +141,45 @@ public final class ItemsActivity extends ListActivity {
         Log.d(TAG, "onCreateContextMenu()");
         super.onCreateContextMenu(menu, v, menuInfo);
         final ItemStateData itemStateData = itemStates.get((int) ((AdapterContextMenuInfo) menuInfo).id);
-        menu.add(0, EDIT_CONTACT_DETAILS_MENU_ITEM, 0, R.string.menu_view_item_state);
+
+        menu.add(0, VIEW_ITEM_STATE_MENU_ITEM, 0, R.string.menu_view_item_state);
+        
+        contextMenuItems = itemStateProcessor.buildMenuItems(FIRST + 1, itemStateData);
+        
+        for (int ind: contextMenuItems.keySet()) {
+            menu.add(0, ind, 0, contextMenuItems.get(ind).getStringResourceId());
+        }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         final ItemStateData itemStateData = itemStates.get((int) info.id);
-        switch (item.getItemId()) {
-        case EDIT_CONTACT_DETAILS_MENU_ITEM:
-            //
-        default:
-            return super.onContextItemSelected(item);
-        }
+        int itemId = item.getItemId();
+        if (item.getItemId() == VIEW_ITEM_STATE_MENU_ITEM) {
+            return true;
+        } else if (contextMenuItems.containsKey(itemId)) {
+            CommandTransformable command = contextMenuItems.get(itemId).getCommand();
+            ItemCommandData itemCommand = new ItemCommandData(System.currentTimeMillis(), itemStateData.getItemId(), command);
+            ItemCommandRequestMessage message = new ItemCommandRequestMessage(itemCommand, OpenHABClientApplication.getSenderEmailAddress());
+            OpenHABClientApplication.addRequest(message);
+            return true;
+        } 
+        
+        return super.onContextItemSelected(item);
+    }
+    
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy()");
+        OpenHABClientApplication.unregisterItemsActivity();
+        
+        super.onDestroy();
+    }
+    
+    public void refreshListAdapter() {
+        Log.d(TAG, "refreshListAdapter()");
+        updateListAdapter();
     }
 
     private boolean startNewActivity(Class<? extends Activity> clazz) {
@@ -128,7 +191,8 @@ public final class ItemsActivity extends ListActivity {
         }
         return true;
     }
-    
+
+    //{"itemStates":[{"acceptedCommands":["ON_OFF","INCREASE_DECREASE","PERCENT","HSB"],"state":{"brightness":0,"saturation":0,"hue":0,"type":"HSB"},"itemId":"Light1","timeSent":"1419892542018"},{"acceptedCommands":[],"state":{"value":"2014-12-29T22:34:51","type":"DATE_TIME"},"itemId":"Date","timeSent":"1419892542019"}],"requestId":{"timestamp":0,"senderEmail":"andrey.pereverzin_sweethome@yahoo.com"},"messageId":{"timestamp":1419892542019,"senderEmail":"andrey.pereverzin_sweethome@yahoo.com"},"messageType":"115","productVersion":"1.0"}
     private ItemsStateResponseMessage buildMessage() {
         String s = "{\"itemStates\":[{\"acceptedCommands\":[\"ON_OFF\",\"INCREASE_DECREASE\",\"PERCENT\",\"HSB\"],\"state\":{\"brightness\":0,\"saturation\":0,\"hue\":0,\"type\":\"HSB\"},\"itemId\":\"Light1\",\"timeSent\":\"1419892542018\"},{\"acceptedCommands\":[],\"state\":{\"value\":\"2014-12-29T22:34:51\",\"type\":\"DATE_TIME\"},\"itemId\":\"Date\",\"timeSent\":\"1419892542019\"}],\"requestId\":{\"timestamp\":0,\"senderEmail\":\"andrey.pereverzin_sweethome@yahoo.com\"},\"messageId\":{\"timestamp\":1419892542019,\"senderEmail\":\"andrey.pereverzin_sweethome@yahoo.com\"},\"messageType\":\"115\",\"productVersion\":\"1.0\"}";
         JSONParser parser = new JSONParser();
@@ -143,5 +207,25 @@ public final class ItemsActivity extends ListActivity {
         JSONObject res = (JSONObject) transformer.getResult();
         ItemsStateResponseMessage messageRes = new ItemsStateResponseMessage(res);
         return messageRes;
+    }
+
+    private void setEnabled() {
+        enableMenuItem.setVisible(false);
+        disableMenuItem.setVisible(true);
+    }
+
+    private void setDisabled() {
+        enableMenuItem.setVisible(true);
+        disableMenuItem.setVisible(false);
+    }
+
+    private void updateListAdapter() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                itemStatesListAdapter = new ItemStatesArrayAdapter(ItemsActivity.this, itemStates);
+                setListAdapter(itemStatesListAdapter);
+                lv.invalidateViews();
+            }
+        });
     }
 }

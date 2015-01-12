@@ -57,9 +57,28 @@
         
     <!-- Item States Options Menu Items -->
     <string name="menu_refresh_item_states">Refresh</string>
+    <string name="menu_enable">Enable</string>
+    <string name="menu_disable">Disable</string>
     
     <!-- Item States Context Menu Items -->
     <string name="menu_view_item_state">View Item</string>
+    <string name="menu_on_item_state">On</string>
+    <string name="menu_off_item_state">Off</string>
+    <string name="menu_increase_item_state">Increase</string>
+    <string name="menu_decrease_item_state">Decrease</string>
+    <string name="menu_increase_hue_item_state">Increase Hue</string>
+    <string name="menu_decrease_hue_item_state">Decrease Hue</string>
+    <string name="menu_increase_saturation_item_state">Increase Saturation</string>
+    <string name="menu_decrease_saturation_item_state">Decrease Saturation</string>
+    <string name="menu_increase_brightness_item_state">Increase Brightness</string>
+    <string name="menu_decrease_brightness_item_state">Decrease Brightness</string>
+    
+    <!-- Item States Descriptions -->
+    <string name="item_state_description_on">ON</string>
+    <string name="item_state_description_off">OFF</string>
+    <string name="item_state_description_hue">Hue</string>
+    <string name="item_state_description_saturation">Sat</string>
+    <string name="item_state_description_brightness">Bri</string>
     
     <string name="google_account_not_found">Google account is not found. Please, define your Google account first</string>
     <string name="invalid_email_address">Invalid email address</string>

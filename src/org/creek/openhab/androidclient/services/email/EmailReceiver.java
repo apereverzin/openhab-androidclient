@@ -1,10 +1,10 @@
 package org.creek.openhab.androidclient.services.email;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
+import org.creek.mailcontrol.model.message.GenericResponse;
 import org.creek.mailcontrol.model.message.TransformException;
-import org.creek.openhab.androidclient.domain.Response;
 import org.creek.openhab.androidclient.service.ServiceException;
 import org.creek.openhab.androidclient.util.CryptoException;
 
@@ -22,9 +22,9 @@ public class EmailReceiver {
         this.emailSendingAndReceivingManager = emailSendingAndReceivingManager;
     }
     
-    public Set<Response> receiveResponses() throws TransformException, ServiceException {
+    public List<GenericResponse> receiveResponses() throws TransformException, ServiceException {
         Log.d(TAG, "receiveResponses()");
-        Set<Response> receivedResponses = emailSendingAndReceivingManager.receiveResponses();
+        List<GenericResponse> receivedResponses = emailSendingAndReceivingManager.receiveResponses();
         Log.d(TAG, "--------------receiveResponses: " + receivedResponses.size());
                 
         return receivedResponses;

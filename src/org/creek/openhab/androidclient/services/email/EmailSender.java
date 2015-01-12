@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.creek.mailcontrol.model.message.GenericMessage;
 import org.creek.mailcontrol.model.message.GenericRequest;
-import org.creek.openhab.androidclient.domain.Request;
-import org.creek.openhab.androidclient.infrastructure.sqlite.SQLiteRepositoryManager;
-import org.creek.openhab.androidclient.infrastructure.sqlite.SQLiteRequestRepository;
+import org.creek.openhab.androidclient.OpenHABClientApplication;
 import org.creek.openhab.androidclient.service.ServiceException;
 import org.creek.openhab.androidclient.util.CryptoException;
 
@@ -28,42 +25,23 @@ public class EmailSender {
 
     public void sendRequestsAndResponses() {
         Log.d(TAG, "sendRequestsAndResponses()");
-        List<Request> failedRequests = sendRequests();
+        List<GenericRequest> failedRequests = sendRequests();
         // TODO do something with unsent data
     }
 
-    private List<Request> sendRequests() {
+    private List<GenericRequest> sendRequests() {
         Log.d(TAG, "sendRequests()");
-        List<Request> unsentDataList = new ArrayList<Request>();
-        SQLiteRequestRepository requestRepository;
-        List<Request> unsentRequests;
+        List<GenericRequest> unsentDataList = new ArrayList<GenericRequest>();
+        List<GenericRequest> unsentRequests;
 
-        try {
-            SQLiteRepositoryManager.getInstance().openDatabase();
-            requestRepository = SQLiteRepositoryManager.getInstance().getRequestRepository();
-
-            unsentRequests = requestRepository.getUnsentRequests();
-        } finally {
-            SQLiteRepositoryManager.getInstance().closeDatabase();
-        }
+        unsentRequests = OpenHABClientApplication.getUnsentRequests();
 
         Log.d(TAG, "--------------sendRequests: " + unsentRequests.size());
         for (int i = 0; i < unsentRequests.size(); i++) {
-            final Request request = unsentRequests.get(i);
+            final GenericRequest request = unsentRequests.get(i);
             try {
                 Log.d(TAG, "--------------sending request: " + request);
                 emailSendingAndReceivingManager.sendMessage(request);
-
-                try {
-                    SQLiteRepositoryManager.getInstance().openDatabase();
-                    requestRepository = SQLiteRepositoryManager.getInstance().getRequestRepository();
-
-                    requestRepository.update(request);
-                    
-                    Log.d(TAG, "--------------request sent: " + request);
-                } finally {
-                    SQLiteRepositoryManager.getInstance().closeDatabase();
-                }
             } catch (ServiceException ex) {
                 unsentDataList.add(request);
             }

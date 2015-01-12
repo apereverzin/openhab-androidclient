@@ -1,12 +1,14 @@
 package org.creek.openhab.androidclient.services.email;
 
-import java.util.Set;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.creek.openhab.androidclient.domain.Response;
-
-import static org.creek.openhab.androidclient.util.ActivityUtil.showException;
+import org.creek.mailcontrol.model.message.GenericResponse;
+import org.creek.mailcontrol.model.message.ItemStateResponseMessage;
+import org.creek.mailcontrol.model.message.ItemsStateResponseMessage;
+import org.creek.openhab.androidclient.OpenHABClientApplication;
+import org.creek.openhab.androidclient.activity.items.ItemsActivity;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -23,7 +25,7 @@ public class EmailSendingAndReceivingService extends Service {
 
     private Timer timer;
     protected ContentResolver contentResolver;
-    
+
     private static final int MILLISECONDS_IN_MINUTE = 60 * 1000;
     // TODO make configurable
     private int timeoutInMinutes = 1;
@@ -39,6 +41,7 @@ public class EmailSendingAndReceivingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "-=-=-=-=-=-=-=-=-=-=-onCreate");
         contentResolver = getContentResolver();
 
         timer = new Timer(TIMER_NAME);
@@ -51,26 +54,43 @@ public class EmailSendingAndReceivingService extends Service {
         timer.cancel();
         timer = null;
     }
-    
+
     private TimerTask emailSendingAndReceivingTask = new TimerTask() {
         @Override
         public void run() {
-            Log.i(TAG, "===================EmailSendingAndReceivingService doing work");
-            try {
-                EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager();
-                
-                Log.d(TAG, "===================EmailSendingAndReceivingService sending");
-                EmailSender emailSender = new EmailSender(emailSendingAndReceivingManager);
-                emailSender.sendRequestsAndResponses();
-                
-                Log.d(TAG, "===================EmailSendingAndReceivingService receiving");
-                EmailReceiver emailReceiver = new EmailReceiver(emailSendingAndReceivingManager);
-                Set<Response> responses = emailReceiver.receiveResponses();
-                if (responses.size() > 0) {
-                    //
+            Log.i(TAG, "===================EmailSendingAndReceivingService doing work: " + OpenHABClientApplication.isEnabled());
+            if (OpenHABClientApplication.isEnabled()) {
+                try {
+                    EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager();
+
+                    Log.d(TAG, "===================EmailSendingAndReceivingService sending");
+                    EmailSender emailSender = new EmailSender(emailSendingAndReceivingManager);
+                    emailSender.sendRequestsAndResponses();
+
+                    Log.d(TAG, "===================EmailSendingAndReceivingService receiving");
+                    EmailReceiver emailReceiver = new EmailReceiver(emailSendingAndReceivingManager);
+                    List<GenericResponse> responses = emailReceiver.receiveResponses();
+                    if (responses.size() > 0) {
+                        for (int i = 0; i < responses.size(); i++) {
+                            GenericResponse response = responses.get(i);
+                            if (response instanceof ItemsStateResponseMessage) {
+                                ItemsStateResponseMessage message = (ItemsStateResponseMessage) response;
+                                OpenHABClientApplication.setItemStates(message.getItemStates());
+                                ItemsActivity itemsActivity = OpenHABClientApplication.getItemsActivity();
+                                Log.d(TAG, "listAdapter is to be refreshed");
+                                if (itemsActivity != null) {
+                                    Log.d(TAG, "refreshing listAdapter");
+                                    itemsActivity.refreshListAdapter();
+                                }
+                            } else if (response instanceof ItemStateResponseMessage) {
+                                ItemStateResponseMessage message = (ItemStateResponseMessage) response;
+                            }
+                        }
+                    }
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.getMessage(), ex);
+                    // showException(EmailSendingAndReceivingService.this, ex);
                 }
-            } catch(Throwable ex) {
-                showException(EmailSendingAndReceivingService.this, ex);
             }
         }
     };

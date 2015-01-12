@@ -3,4 +3,6 @@
               style="@style/HorizontalLinearLayout.Expandable">
         <TextView android:id="@+id/item_id"
                   style="@style/TextView.HorizontallyExpandable.ItemStatesRowText"/>
+        <TextView android:id="@+id/item_state"
+                  style="@style/TextView.HorizontallyExpandable.ItemStatesRowText"/>
 </LinearLayout>

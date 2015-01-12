@@ -6,8 +6,6 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.google.android.maps.GeoPoint;
-
 /**
  * 
  * @author Andrey Pereverzin
@@ -21,21 +19,6 @@ public final class Util {
         //
     }
     
-    /** Radius of the Earth in meters */
-    private static final double EARTH_RADIUS = 6371000;
-
-    public static double getDistance(GeoPoint geoPoint1, GeoPoint geoPoint2) {
-        double lat1 = geoPoint1.getLatitudeE6() / 1E6;
-        double lat2 = geoPoint2.getLatitudeE6() / 1E6;
-        double lon1 = geoPoint1.getLongitudeE6() / 1E6;
-        double lon2 = geoPoint2.getLongitudeE6() / 1E6;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS * c;
-    }
-
     public static String formatDouble(double val) {
         try {
             return new BigDecimal(val).setScale(2, RoundingMode.HALF_UP).toPlainString();
